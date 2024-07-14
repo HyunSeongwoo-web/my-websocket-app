@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디자인 예제</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 100%;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+        .sidebar button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #444;
+            border: none;
+            cursor: pointer;
+            width: 100px;
+            height: 50px;
+        }
+        .sidebar button:hover {
+            background-color: #555;
+        }
+        .content {
+            position: relative;
+            margin-top: 20px;
+            width: 1440px;
+            max-width: 100%;
+        }
+        .content img {
+            width: 1060px;
+            height: auto;
+        }
+        .overlay {
+            position: absolute;
+            border: 5px solid rgba(0, 0, 0, 0.8);
+            color: #fff;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: transparent;
+            box-sizing: content-box;
+        }
+        .overlay .text {
+            width: calc(100% + 10px);
+            background-color: rgba(0, 0, 255, 0.5);
+            padding: 5px 0;
+            box-sizing: border-box;
+            position: relative;
+            top: -5px;
+            left: -5px;
+            color: #ffffff;
+        }
+        .overlay.filled {
+            background-color: rgba(0, 0, 255, 0.5);
+        }
+        .admin-panel {
+            position: fixed;
+            bottom: 10px;
+            right: 70px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+        }
+        .admin-panel select,
+        .admin-panel button {
+            margin: 5px 0;
+            padding: 5px;
+            font-size: 16px;
+            background-color: #444;
+            border: none;
+            color: #fff;
+        }
+        .admin-panel button {
+            cursor: pointer;
+        }
+        .admin-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #ff4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .close-button:hover {
+            background-color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <button onclick="showOverlay('상경 계열')">상경 계열</button>
+        <button onclick="showOverlay('예술 계열')">예술 계열</button>
+        <button onclick="showOverlay('외국어 계열')">외국어<br>계열</button>
+        <button onclick="showOverlay('사회 계열')">사회 계열</button>
+        <button onclick="showOverlay('자연 과학 계열')">자연 과학 계열</button>
+        <button onclick="showOverlay('공학 계열')">공학 계열</button>
+        <button onclick="showOverlay('정보 계열')">정보 계열</button>
+        <button onclick="showOverlay('의학 계열')">의학 계열</button>
+        <button onclick="showAll()">전체 보기</button>
+    </div>
+    <div class="content">
+        <img src="image.png" alt="층별 배치도">
+        <div id="overlay-1" class="overlay blue" style="top: 88.89px; left: 8.89px; width: 370px; height: 80px;">
+            <div class="text">즉시 입장 가능</div>
+        </div>
+        <div id="overlay-2" class="overlay blue" style="top: 88.89px; left: 537.779px; width: 370px; height: 80px;">
+            <div class="text">즉시 입장 가능</div>
+        </div>
+
+        <div id="overlay-3" class="overlay blue" style="top: 240px; left: 8.889px; width: 370px; height: 80px;">
+            <div class="text">즉시 입장 가능</div>
+        </div>
+        <div id="overlay-4" class="overlay blue" style="top: 240px; left: 466.667px; width: 225px; height: 80px;">
+            <div class="text">즉시 입장 가능</div>
+        </div>
+        <div id="overlay-5" class="overlay blue" style="top: 400px; left: 8.889px; width: 220px; height: 80px;">
+            <div class="text">즉시 입장 가능</div>
+        </div>
+        <div id="overlay-6" class="overlay blue" style="top: 400px; left: 448.889px; width: 225px; height: 80px;">
+            <div class="text">즉시 입장 가능</div>
+        </div>
+        <div id="overlay-7" class="overlay blue" style="top: 142px; left: 848.88px; width: 190px; height: 337.77px;">
+            <div class="text">즉시 입장 가능</div>
+        </div>
+        <div id="overlay-8" class="overlay blue" style="top: 551px; left: 502px; width: 225px; height: 80px;">
+            <div class="text">즉시 입장 가능</div>
+        </div>
+        <div id="dynamic-overlays"></div>
+    </div>
+    <div class="admin-panel" id="admin-panel">
+        <button class="close-button" onclick="toggleAdminPanel(false)">X</button>
+        <h3>관리자 모드</h3>
+        <label for="overlay-select">구역 선택:</label>
+        <select id="overlay-select">
+            <option value="overlay-1">구역 1</option>
+            <option value="overlay-2">구역 2</option>
+            <option value="overlay-3">구역 3</option>
+            <option value="overlay-4">구역 4</option>
+            <option value="overlay-5">구역 5</option>
+            <option value="overlay-6">구역 6</option>
+            <option value="overlay-7">구역 7</option>
+            <option value="overlay-8">구역 8</option>
+        </select>
+        <label for="status-select">상태 선택:</label>
+        <select id="status-select">
+            <option value="blue">즉시 입장 가능</option>
+            <option value="yellow">대기 있음</option>
+            <option value="red">혼잡</option>
+        </select>
+        <button onclick="applyChanges()">적용</button>
+    </div>
+    <button onclick="authenticateAdmin()" class="admin-button">관리자 모드</button>
+
+    <script>
+        // WebSocket 연결 설정
+        const ws = new WebSocket('ws://localhost:8080');
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            updateOverlay(data.overlay, data.status);
+        };
+
+        function showOverlay(button) {
+            var dynamicOverlaysContainer = document.getElementById('dynamic-overlays');
+            dynamicOverlaysContainer.innerHTML = ''; // 기존 오버레이 제거
+
+            var positions = {
+                '상경 계열': [
+                    {top: '426px', left: '613px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '533px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '453px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '471px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '546px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '244px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '115px', left: '622px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '115px', left: '857px', width: '70px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '115px', left: '13px', width: '370px', height: '55px', bgColor: 'rgba(255, 165, 0, 0.5)', borderColor: 'orange', filled: true}
+                ],
+
+                '예술 계열': [
+                    {top: '426px', left: '613px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '426px', left: '533px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '426px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '426px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '426px', left: '453px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '266px', left: '546px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '266px', left: '471px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '266px', left: '622px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '266px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '266px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '266px', left: '977px', width: '70px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true},
+                    {top: '115px', left: '13px', width: '370px', height: '55px', bgColor: 'rgba(255, 192, 203, 0.5)', borderColor: 'pink', filled: true}
+                ],
+
+                '외국어 계열': [
+                    {top: '426px', left: '613px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '533px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '453px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '160px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '311px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '471px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '622px', width: '70px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '115px', left: '13px', width: '370px', height: '55px', bgColor: 'rgba(0, 0, 128, 0.5)', borderColor: 'orange', filled: true}
+                ],
+
+                '사회 계열': [
+                    {top: '426px', left: '613px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '426px', left: '533px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '426px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '426px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '426px', left: '453px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '266px', left: '311px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '266px', left: '546px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '266px', left: '471px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '266px', left: '622px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '266px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '266px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '115px', left: '777px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '115px', left: '546px', width: '70px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'rgba(0, 128, 0, 0.5)', filled: true},
+                    {top: '115px', left: '13px', width: '370px', height: '55px', bgColor: 'rgba(65, 28, 32, 0.5)', borderColor: 'orange', filled: true}
+                ],
+
+                '자연 과학 계열': [
+                    {top: '426px', left: '613px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '533px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '453px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '546px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '471px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '160px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '244px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '577px', left: '506px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '328px', left: '977px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '853px', width: '70px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '115px', left: '13px', width: '370px', height: '55px', bgColor: 'rgba(0, 128, 0, 0.5)', borderColor: 'orange', filled: true}
+                ],
+
+                '공학 계열': [
+                    {top: '426px', left: '613px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '426px', left: '533px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '426px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '426px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '426px', left: '453px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '546px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '622px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '160px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '244px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '577px', left: '506px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '168px', left: '977px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '853px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '328px', left: '977px', width: '70px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}, {top: '115px', left: '13px', width: '370px', height: '55px', bgColor: 'rgba(169, 169, 169, 0.5)', borderColor: 'orange', filled: true}
+                ],
+
+                '정보 계열': [
+                    {top: '426px', left: '613px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '533px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '426px', left: '453px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '853px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '546px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '471px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '266px', left: '244px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '577px', left: '506px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '577px', left: '582px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '577px', left: '640px', width: '70px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true},
+                    {top: '115px', left: '13px', width: '370px', height: '55px', bgColor: 'rgba(128, 0, 128, 0.5)', borderColor: 'orange', filled: true}
+                ],
+
+                '의학 계열': [
+                    {top: '426px', left: '613px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '426px', left: '533px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '426px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '426px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '426px', left: '453px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '546px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '622px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '471px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '13px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '88px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '160px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '266px', left: '244px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '577px', left: '506px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '426px', left: '853px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '328px', left: '977px', width: '70px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}, {top: '115px', left: '13px', width: '370px', height: '55px', bgColor: 'rgba(53, 200, 245, 0.5)', borderColor: 'orange', filled: true}
+                ]
+            };
+
+            positions[button].forEach((pos, index) => {
+                var dynamicOverlay = document.createElement('div');
+                dynamicOverlay.className = 'overlay';
+                dynamicOverlay.style.top = pos.top;
+                dynamicOverlay.style.left = pos.left;
+                dynamicOverlay.style.width = pos.width;
+                dynamicOverlay.style.height = pos.height;
+                dynamicOverlay.style.borderColor = pos.borderColor;
+                dynamicOverlay.style.backgroundColor = pos.filled ? pos.bgColor : 'transparent';
+                dynamicOverlay.style.borderWidth = '0px';
+                dynamicOverlaysContainer.appendChild(dynamicOverlay);
+            });
+        }
+
+        function showAll() {
+            var dynamicOverlaysContainer = document.getElementById('dynamic-overlays');
+            dynamicOverlaysContainer.innerHTML = ''; // 모든 동적 오버레이 제거
+        }
+
+        function authenticateAdmin() {
+            var password = prompt("비밀번호를 입력하세요:");
+            if (password === '0428') {
+                toggleAdminPanel(true);
+            } else {
+                alert("비밀번호가 틀렸습니다.");
+            }
+        }
+
+        function toggleAdminPanel(show) {
+            var adminPanel = document.getElementById('admin-panel');
+            if (show) {
+                adminPanel.style.display = 'flex';
+            } else {
+                adminPanel.style.display = 'none';
+            }
+        }
+
+        function applyChanges() {
+            const selectedOverlay = document.getElementById('overlay-select').value;
+            const selectedStatus = document.getElementById('status-select').value;
+            updateOverlay(selectedOverlay, selectedStatus);
+
+            // 서버로 상태 변경 전송
+            ws.send(JSON.stringify({
+                overlay: selectedOverlay,
+                status: selectedStatus
+            }));
+        }
+
+        function updateOverlay(overlayId, status) {
+            const overlayElement = document.getElementById(overlayId);
+
+            overlayElement.classList.remove('blue', 'yellow', 'red');
+            if (status === 'blue') {
+                overlayElement.classList.add('blue');
+                overlayElement.querySelector('.text').style.backgroundColor = 'rgba(0, 0, 255, 0.5)';
+                overlayElement.querySelector('.text').textContent = '즉시 입장 가능';
+            } else if (status === 'yellow') {
+                overlayElement.classList.add('yellow');
+                overlayElement.querySelector('.text').style.backgroundColor = 'rgba(255, 255, 0, 0.5)';
+                overlayElement.querySelector('.text').textContent = '대기 있음';
+            } else if (status === 'red') {
+                overlayElement.classList.add('red');
+                overlayElement.querySelector('.text').style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
+                overlayElement.querySelector('.text').textContent = '혼잡';
+            }
+        }
+    </script>
+</body>
+</html>
